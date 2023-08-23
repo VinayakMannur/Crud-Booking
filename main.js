@@ -11,6 +11,37 @@ userList.addEventListener('click',removeItem);
 
 editList.addEventListener('click',edit);
 
+window.addEventListener("DOMContentLoaded",()=>{
+    axios.get("https://crudcrud.com/api/310b601288d54688a2089c8033b9fb26/appointments")
+        .then((responce)=>{
+            console.log(responce.data);
+
+            for(var i=0;i<responce.data.length;i++){
+                showUserList(responce.data[i]);
+            }
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+})
+
+function showUserList(user){
+    const li = document.createElement('li');
+    const deleteBtn = document.createElement('button');
+    const editBtn = document.createElement('button');
+    deleteBtn.className = 'delete';
+    editBtn.className = 'edit';
+    deleteBtn.appendChild(document.createTextNode('X'));
+    editBtn.appendChild(document.createTextNode('EDIT'));
+
+    li.appendChild(document.createTextNode(`${user.name} : ${user.email}  `)); 
+
+    li.appendChild(editBtn);
+    li.appendChild(deleteBtn);
+
+    userList.appendChild(li);  
+}
+
 function onSubmit(e){
     e.preventDefault();
     // console.log(nameInput.value);
@@ -36,10 +67,11 @@ function onSubmit(e){
             email : `${emailInput.value}`
         };
 
+
         axios.post("https://crudcrud.com/api/310b601288d54688a2089c8033b9fb26/appointments",obj)
             .then((responce)=>{
                 userList.appendChild(li);
-                console.log(responce.data);
+                // console.log(responce.data);
             })
             .catch(err=>console.log(err))
 
@@ -74,3 +106,4 @@ function edit(e){
             userList.removeChild(li);
     }
 }
+
