@@ -12,7 +12,7 @@ userList.addEventListener('click',removeItem);
 editList.addEventListener('click',edit);
 
 window.addEventListener("DOMContentLoaded",()=>{
-    axios.get("https://crudcrud.com/api/310b601288d54688a2089c8033b9fb26/appointments")
+    axios.get("https://crudcrud.com/api/8c80b94cf6224a1fb3f76363dc382e52/appointments")
         .then((responce)=>{
             console.log(responce.data);
 
@@ -33,6 +33,11 @@ function showUserList(user){
     editBtn.className = 'edit';
     deleteBtn.appendChild(document.createTextNode('X'));
     editBtn.appendChild(document.createTextNode('EDIT'));
+
+    const span = document.createElement('span');
+    span.appendChild(document.createTextNode(`${user.email}`))
+    span.style = 'display:none';
+    li.appendChild(span)
 
     li.appendChild(document.createTextNode(`${user.name} : ${user.email}  `)); 
 
@@ -68,7 +73,7 @@ function onSubmit(e){
         };
 
 
-        axios.post("https://crudcrud.com/api/310b601288d54688a2089c8033b9fb26/appointments",obj)
+        axios.post("https://crudcrud.com/api/8c80b94cf6224a1fb3f76363dc382e52/appointments",obj)
             .then((responce)=>{
                 userList.appendChild(li);
                 // console.log(responce.data);
@@ -85,11 +90,36 @@ function onSubmit(e){
     }
 }
 
+function del(data,emailid){
+    if(data.email == emailid){
+        axios.delete(`https://crudcrud.com/api/8c80b94cf6224a1fb3f76363dc382e52/appointments/${data._id}`)
+        .then((responce)=>{
+            console.log(responce)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    }
+}
+
+function remove(emailid){
+    axios.get("https://crudcrud.com/api/8c80b94cf6224a1fb3f76363dc382e52/appointments")
+        .then((responce)=>{
+            console.log(responce.data);
+
+            for(var i=0;i<responce.data.length;i++){
+                del(responce.data[i],emailid);
+            }
+        })
+
+}
+
 function removeItem(e){
     e.preventDefault();
     if(e.target.classList.contains('delete')){
         if(confirm('Are You Sure?')){
-            localStorage.removeItem(`${emailInput.value}`);
+            console.log(e.target.parentElement.firstChild.textContent)
+            remove(e.target.parentElement.firstChild.textContent);
             var li = e.target.parentElement;
             userList.removeChild(li);
             nameInput.value = '';
